@@ -2,8 +2,8 @@
 
 ### docker deploy
 ```bash
-./deploy.sh
 ./deploy_db.sh mysql
+./deploy.sh
 ```
 
 ### run
