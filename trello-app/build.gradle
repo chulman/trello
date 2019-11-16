@@ -1,0 +1,14 @@
+description 'app-server'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    archiveName = 'app.jar'
+}
+
+dependencies {
+    compile project(':trello-domain')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compileOnly('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}

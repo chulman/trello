@@ -1,0 +1,48 @@
+version: "2.1"
+services:
+  app:
+    build: trello-app
+    image: chulm/trello/app:latest
+    environment:
+      - SPRING_PROFILE=production
+      - JVM_MEMORY=-Xmx4g -Xms4g -XX:MetaspaceSize=200m
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volume/logs/app:/prod/logs/bootapp
+    external_links:
+      - mysql
+    network_mode: bridge
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/healthcheck"]
+      interval: 15s
+      timeout: 60s
+      retries: 15
+
+  web:
+    build: trello-web
+    image: chulm/trello/web:latest
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthchek"]
+      interval: 15s
+      timeout: 60s
+      retries: 5
+
+  nginx:
+    build: trello-nginx
+    image: chulm/trello/nginx:latest
+    ports:
+      - 8000:80
+      - 443:443
+    links:
+      - app:app
+      - web:web
+    volumes:
+      - ./volume/logs/nginx:/prod/logs/nginx
+    depends_on:
+      app:
+        condition: service_healthy
+      web:
+        condition: service_healthy
